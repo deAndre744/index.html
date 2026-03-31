@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIT 402 Quiz</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --correct: #15803d;
+      --wrong: #b91c1c;
+      --border: #334155;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #020617, #0f172a);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .badge {
+      text-align: center;
+      font-size: 14px;
+      color: #fde68a;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .hero {
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .stat {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 16px;
+      min-width: 140px;
+    }
+
+    .quiz-card {
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 10px 32px rgba(0,0,0,0.3);
+    }
+
+    .question-number {
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 22px;
+      margin-bottom: 18px;
+    }
+
+    .answers {
+      display: grid;
+      gap: 12px;
+    }
+
+    .answer-btn {
+      width: 100%;
+      text-align: left;
+      background: #0b1220;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+    }
+
+    .answer-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+    }
+
+    .answer-btn.correct {
+      background: rgba(21, 128, 61, 0.22);
+      border-color: #22c55e;
+      color: #dcfce7;
+    }
+
+    .answer-btn.wrong {
+      background: rgba(185, 28, 28, 0.22);
+      border-color: #ef4444;
+      color: #fee2e2;
+    }
+
+    .answer-btn:disabled {
+      cursor: default;
+      opacity: 1;
+    }
+
+    .feedback {
+      margin-top: 16px;
+      min-height: 28px;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button.control {
+      background: var(--accent);
+      color: #082f49;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #334155;
+      color: white;
+    }
+
+    .result {
+      display: none;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 16px;
+      background: #0b1220;
+      border: 1px solid var(--border);
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .question-text { font-size: 18px; }
+      h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="badge">BERKAYBABA YAPTI</div>
+
+    <section class="hero">
+      <h1>ELIT 402 Practice Quiz</h1>
+      <p class="sub">Weeks 2–6: Formalism, Structuralism, Post-Structuralism, and Postmodernism. Click an answer to see instant green/red feedback and hear a sound.</p>
+      <div class="stats">
+        <div class="stat"><strong id="progress">Question 1 / 25</strong></div>
+        <div class="stat"><strong id="score">Score: 0</strong></div>
+        <div class="stat"><strong id="correctCount">Correct: 0</strong></div>
+      </div>
+    </section>
+
+    <section class="quiz-card">
+      <div class="question-number" id="qNumber"></div>
+      <div class="question-text" id="qText"></div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="controls">
+        <button class="control" id="nextBtn" disabled>Next Question</button>
+        <button class="control secondary" id="restartBtn">Restart Quiz</button>
+      </div>
+      <div class="result" id="resultBox"></div>
+      <div class="small">Tip: This works as a single-file static website, so it is easy to publish with GitHub Pages.</div>
+    </section>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is the main focus of Formalism?",
+        answers: [
+          "The author's life and intentions",
+          "The text's internal structure and language",
+          "The reader's emotional response",
+          "The political history behind the text"
+        ],
+        correct: 1
+      },
+      {
+        question: "Who introduced the concept of defamiliarization?",
+        answers: ["Roland Barthes", "Victor Shklovsky", "Jean Baudrillard", "Jacques Derrida"],
+        correct: 1
+      },
+      {
+        question: "In Formalism, which approach is most important?",
+        answers: ["Close reading", "Biography", "Sociology", "Psychoanalysis"],
+        correct: 0
+      },
+      {
+        question: "What does literariness mean?",
+        answers: [
+          "The political message of a text",
+          "The historical value of a work",
+          "The features that make a text literary",
+          "The popularity of a novel"
+        ],
+        correct: 2
+      },
+      {
+        question: "According to Structuralism, meaning comes mainly from:",
+        answers: ["isolated words", "the author's intention", "systems and relations", "reader feelings"],
+        correct: 2
+      },
+      {
+        question: "According to Saussure, a sign is made up of:",
+        answers: ["author and reader", "signifier and signified", "speech and writing", "image and object"],
+        correct: 1
+      },
+      {
+        question: "Which term refers to the language system as a whole?",
+        answers: ["Parole", "Langue", "Différance", "Pastiche"],
+        correct: 1
+      },
+      {
+        question: "What does the arbitrariness of the sign mean?",
+        answers: [
+          "Words naturally resemble objects",
+          "Every language uses the same words",
+          "There is no natural link between a word and its meaning",
+          "Meaning is always fixed"
+        ],
+        correct: 2
+      },
+      {
+        question: "Which concept is central to Structuralism?",
+        answers: ["Hyperreality", "Binary opposition", "Simulation", "Metafiction"],
+        correct: 1
+      },
+      {
+        question: "Roland Barthes argued that literature can function as:",
+        answers: ["a system of signs", "pure autobiography", "historical evidence only", "moral law"],
+        correct: 0
+      },
+      {
+        question: "What is the main idea of Barthes' 'Death of the Author'?",
+        answers: [
+          "The author controls all meaning",
+          "The reader plays a major role in creating meaning",
+          "The text has only one meaning",
+          "Biography is the key to interpretation"
+        ],
+        correct: 1
+      },
+      {
+        question: "Post-Structuralism mainly argues that meaning is:",
+        answers: ["fully stable", "universal", "unstable and multiple", "based only on grammar"],
+        correct: 2
+      },
+      {
+        question: "Who is most associated with Deconstruction?",
+        answers: ["Saussure", "Jakobson", "Derrida", "Levi-Strauss"],
+        correct: 2
+      },
+      {
+        question: "Différance suggests that meaning is:",
+        answers: ["delayed and shifting", "final and complete", "easy to fix", "purely visual"],
+        correct: 0
+      },
+      {
+        question: "Deconstruction often looks for:",
+        answers: ["fixed truths", "contradictions and instability", "author interviews", "historical dates only"],
+        correct: 1
+      },
+      {
+        question: "In Derrida's thought, binary oppositions are important because:",
+        answers: [
+          "they are always equal",
+          "they show how one term is often privileged over another",
+          "they remove ambiguity",
+          "they prove language is stable"
+        ],
+        correct: 1
+      },
+      {
+        question: "Postmodernism became especially influential after:",
+        answers: ["World War II", "the Renaissance", "the Middle Ages", "the Enlightenment only"],
+        correct: 0
+      },
+      {
+        question: "Which theorist is strongly connected with hyperreality?",
+        answers: ["Barthes", "Shklovsky", "Baudrillard", "Eichenbaum"],
+        correct: 2
+      },
+      {
+        question: "What is hyperreality?",
+        answers: [
+          "A realistic novel style",
+          "A condition where representation becomes more real than reality",
+          "A poetic rhythm pattern",
+          "A type of close reading"
+        ],
+        correct: 1
+      },
+      {
+        question: "What are simulacra?",
+        answers: [
+          "Original objects with clear truth",
+          "Copies without an original reference",
+          "Formalist devices",
+          "Lines of poetry"
+        ],
+        correct: 1
+      },
+      {
+        question: "Which feature is strongly linked to postmodern literature?",
+        answers: ["Metafiction", "Single stable meaning", "Strict realism only", "Author-centered certainty"],
+        correct: 0
+      },
+      {
+        question: "Pastiche means:",
+        answers: [
+          "destroying all previous texts",
+          "imitating or mixing earlier styles",
+          "writing only realistic description",
+          "rejecting intertextuality"
+        ],
+        correct: 1
+      },
+      {
+        question: "A critic who studies imagery, tone, and structure without using context is using:",
+        answers: ["Formalism", "Postmodernism", "Marxism", "Reader-response theory"],
+        correct: 0
+      },
+      {
+        question: "A critic who compares a text with wider cultural codes and systems is using:",
+        answers: ["Structuralism", "Formalism", "Classicism", "New Historicism only"],
+        correct: 0
+      },
+      {
+        question: "A novel that blurs fiction and reality and questions truth is best linked to:",
+        answers: ["Postmodernism", "Formalism", "Structuralism", "Romanticism"],
+        correct: 0
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    const qNumber = document.getElementById('qNumber');
+    const qText = document.getElementById('qText');
+    const answersBox = document.getElementById('answers');
+    const feedback = document.getElementById('feedback');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const resultBox = document.getElementById('resultBox');
+    const progress = document.getElementById('progress');
+    const scoreEl = document.getElementById('score');
+    const correctCount = document.getElementById('correctCount');
+
+    function playSound(type) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      const ctx = new AudioContextClass();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'correct') {
+        osc.frequency.value = 880;
+      } else {
+        osc.frequency.value = 220;
+      }
+
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.22);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.22);
+    }
+
+    function updateStats() {
+      progress.textContent = `Question ${Math.min(currentIndex + 1, questions.length)} / ${questions.length}`;
+      scoreEl.textContent = `Score: ${score}`;
+      correctCount.textContent = `Correct: ${score}`;
+    }
+
+    function renderQuestion() {
+      answered = false;
+      nextBtn.disabled = true;
+      feedback.textContent = '';
+      resultBox.style.display = 'none';
+      answersBox.innerHTML = '';
+
+      const q = questions[currentIndex];
+      qNumber.textContent = `Question ${currentIndex + 1}`;
+      qText.textContent = q.question;
+      updateStats();
+
+      q.answers.forEach((answer, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = `${String.fromCharCode(65 + index)}. ${answer}`;
+        btn.addEventListener('click', () => handleAnswer(index, btn));
+        answersBox.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(selectedIndex, selectedBtn) {
+      if (answered) return;
+      answered = true;
+      const q = questions[currentIndex];
+      const buttons = Array.from(document.querySelectorAll('.answer-btn'));
+
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === q.correct) btn.classList.add('correct');
+      });
+
+      if (selectedIndex === q.correct) {
+        score++;
+        selectedBtn.classList.add('correct');
+        feedback.textContent = 'Correct ✅';
+        feedback.style.color = '#86efac';
+        playSound('correct');
+      } else {
+        selectedBtn.classList.add('wrong');
+        feedback.textContent = `Wrong ❌ | Correct answer: ${String.fromCharCode(65 + q.correct)}`;
+        feedback.style.color = '#fca5a5';
+        playSound('wrong');
+      }
+
+      updateStats();
+      nextBtn.disabled = false;
+    }
+
+    function showResult() {
+      qNumber.textContent = 'Finished';
+      qText.textContent = 'You completed the quiz.';
+      answersBox.innerHTML = '';
+      feedback.textContent = '';
+      resultBox.style.display = 'block';
+
+      const percent = Math.round((score / questions.length) * 100);
+      let comment = 'Good work.';
+      if (percent >= 90) comment = 'Excellent result.';
+      else if (percent >= 75) comment = 'Strong result.';
+      else if (percent >= 60) comment = 'Decent result, but review the key concepts again.';
+      else comment = 'You should review the slides and try again.';
+
+      resultBox.innerHTML = `
+        <h2 style="margin-top:0;">Final Score: ${score} / ${questions.length}</h2>
+        <p>${comment}</p>
+        <p><strong>Main topics:</strong> Formalism, Structuralism, Post-Structuralism, Postmodernism</p>
+      `;
+      progress.textContent = `Question ${questions.length} / ${questions.length}`;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      currentIndex = 0;
+      score = 0;
+      renderQuestion();
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>
